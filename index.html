@@ -3,42 +3,61 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MOMO Login</title>
+<title>تنبيه قبل الدخول</title>
 <style>
 *{box-sizing:border-box;}
-body{margin:0;padding:0;font-family:'Segoe UI',sans-serif;
-background:linear-gradient(135deg,#0f4c4c,#081818);
-display:flex;justify-content:center;align-items:center;height:100vh;color:#fff;overflow:hidden;}
-.auth-card{width:90%;max-width:400px;background:rgba(255,255,255,0.05);padding:30px;border-radius:25px;backdrop-filter:blur(15px);text-align:center;position:relative;box-shadow:0 12px 25px rgba(0,0,0,0.5);}
-.auth-logo{width:120px;margin-bottom:15px;}
-h2{margin-bottom:20px;}
-input{width:100%;padding:14px;border-radius:15px;background:rgba(255,255,255,0.15);border:none;color:white;margin-bottom:15px;font-size:16px;}
-button{width:100%;padding:15px;background:#18c4b8;border:none;border-radius:25px;color:#003;font-size:18px;font-weight:bold;cursor:pointer;}
+body {
+  margin:0;padding:0;font-family:'Segoe UI',sans-serif;
+  background: linear-gradient(135deg, #0f4c4c, #081818);
+  display:flex;justify-content:center;align-items:center;height:100vh;color:#fff;
+}
+.notice-card {
+  width:90%;max-width:500px;
+  background: rgba(255,255,255,0.05);
+  padding:30px;border-radius:25px;
+  backdrop-filter: blur(15px);
+  box-shadow:0 12px 25px rgba(0,0,0,0.5);
+  text-align:center;position:relative;overflow:hidden;
+}
+.notice-card img {
+  width:120px;margin-bottom:20px;
+}
+.notice-card h2 {margin-bottom:15px;font-size:24px;}
+.notice-card p {text-align:right;margin:8px 0;line-height:1.5;font-size:16px;}
+.notice-buttons {display:flex;justify-content: space-between;margin-top:20px;}
+.notice-buttons button {width:48%;padding:12px;font-size:16px;font-weight:bold;border:none;border-radius:15px;cursor:pointer;transition: all 0.3s ease;}
+.notice-buttons .reject {background:#fff;color:#000;}
+.notice-buttons .accept {background:#18c4b8;color:#003;}
+.notice-buttons .reject:hover {background:#e0e0e0;}
+.notice-buttons .accept:hover {background:#12b0a0;}
 </style>
 </head>
 <body>
+<div class="notice-card">
+  <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPGNpcmNsZSByPSI0NSIgeD0iNTAiIHk9IjUwIiBmaWxsPSIjM2RkMmMyIiAvPgogIDx0ZXh0IHg9IjUwIiB5PSI1NCIgZm9udC1zaXplPSIyMCIgZmlsbD0iIzAwMyIgZm9udC13ZWlnaHQ9IjcwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZG9taW5hbnQtYmFzZWxpbmU9ImNlbnRyYWwiPk1PTTwvdGV4dD4KPC9zdmc+" alt="MOMO Logo">
+  <h2>مرحبًا بالجميع!</h2>
+  <p>قبل أن نبدأ، يرجى قراءة الشروط بعناية. إذا وافقت على الشروط، سيتم الانتقال للصفحة الرئيسية.</p>
+  <p>1- الوصول للمنصة مسؤوليتكم.</p>
+  <p>2- المنصة لإدارة الحسابات المالية بين المستخدمين.</p>
+  <p>3- أي شخص يحاول إنشاء حساب ثاني سيتم حظر حساباته.</p>
+  <p>4- تم إنشاء المنصة في 11/12/2025.</p>
+  <p>5- أموالكم مسؤوليتكم.</p>
 
-<div class="auth-card">
-  <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPGNpcmNsZSByPSI0NSIgeD0iNTAiIHk9IjUwIiBmaWxsPSIjM2RkMmMyIiAvPgogIDx0ZXh0IHg9IjUwIiB5PSI1NCIgZm9udC1zaXplPSIyMCIgZmlsbD0iIzAwMyIgZm9udC13ZWlnaHQ9IjcwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZG9taW5hbnQtYmFzZWxpbmU9ImNlbnRyYWwiPk1PTTwvdGV4dD4KPC9zdmc+" class="auth-logo">
-  <h2>تسجيل الدخول</h2>
-
-  <input type="text" id="phone" placeholder="رقم الهاتف">
-  <input type="password" id="password" placeholder="كلمة المرور">
-
-  <button id="loginBtn">تسجيل الدخول</button>
+  <div class="notice-buttons">
+    <button class="reject" onclick="rejectNotice()">رفض الشروط</button>
+    <button class="accept" onclick="acceptNotice()">أوافق على الشروط</button>
+  </div>
 </div>
 
 <script>
-// عند الضغط على تسجيل الدخول، التوجه مباشرة ل notice.html
-document.getElementById('loginBtn').addEventListener('click', () => {
-    const phone = document.getElementById('phone').value.trim();
-    const pass = document.getElementById('password').value.trim();
-    if(phone === "" || pass === ""){
-        alert("يرجى ملء جميع الحقول");
-        return;
-    }
-    window.location.href = "notice.html";
-});
+function rejectNotice(){
+  alert("تم رفض الشروط. سيتم إعادة توجيهك.");
+  window.location.href = "index.html";
+}
+function acceptNotice(){
+  alert("شكرًا لموافقتك. جاري الانتقال للصفحة الرئيسية...");
+  setTimeout(()=>{ window.location.href = "home.html"; },1500);
+}
 </script>
 </body>
 </html>
