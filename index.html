@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MOMO Login</title>
+<style>
+*{box-sizing:border-box;}
+body{margin:0;padding:0;font-family:'Segoe UI',sans-serif;
+background:linear-gradient(135deg,#0f4c4c,#081818);
+display:flex;justify-content:center;align-items:center;height:100vh;color:#fff;overflow:hidden;}
+.auth-card{width:90%;max-width:400px;background:rgba(255,255,255,0.05);padding:30px;border-radius:25px;backdrop-filter:blur(15px);text-align:center;position:relative;box-shadow:0 12px 25px rgba(0,0,0,0.5);}
+.auth-logo{width:120px;margin-bottom:15px;}
+h2{margin-bottom:20px;}
+input{width:100%;padding:14px;border-radius:15px;background:rgba(255,255,255,0.15);border:none;color:white;margin-bottom:15px;font-size:16px;}
+button{width:100%;padding:15px;background:#18c4b8;border:none;border-radius:25px;color:#003;font-size:18px;font-weight:bold;cursor:pointer;}
+</style>
+</head>
+<body>
+
+<div class="auth-card">
+  <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPGNpcmNsZSByPSI0NSIgeD0iNTAiIHk9IjUwIiBmaWxsPSIjM2RkMmMyIiAvPgogIDx0ZXh0IHg9IjUwIiB5PSI1NCIgZm9udC1zaXplPSIyMCIgZmlsbD0iIzAwMyIgZm9udC13ZWlnaHQ9IjcwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZG9taW5hbnQtYmFzZWxpbmU9ImNlbnRyYWwiPk1PTTwvdGV4dD4KPC9zdmc+" class="auth-logo">
+  <h2>تسجيل الدخول</h2>
+
+  <input type="text" id="phone" placeholder="رقم الهاتف">
+  <input type="password" id="password" placeholder="كلمة المرور">
+
+  <button id="loginBtn">تسجيل الدخول</button>
+</div>
+
+<script>
+// عند الضغط على تسجيل الدخول، التوجه مباشرة ل notice.html
+document.getElementById('loginBtn').addEventListener('click', () => {
+    const phone = document.getElementById('phone').value.trim();
+    const pass = document.getElementById('password').value.trim();
+    if(phone === "" || pass === ""){
+        alert("يرجى ملء جميع الحقول");
+        return;
+    }
+    window.location.href = "notice.html";
+});
+</script>
+</body>
+</html>

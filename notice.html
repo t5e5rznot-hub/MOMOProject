@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تنبيه قبل الدخول</title>
+<style>
+*{box-sizing:border-box;}
+body {margin:0;padding:0;font-family:'Segoe UI',sans-serif;background: linear-gradient(135deg, #0f4c4c, #081818);display:flex;justify-content:center;align-items:center;height:100vh;color:#fff;}
+.notice-card {width:90%;max-width:500px;background: rgba(255,255,255,0.05);padding:30px;border-radius:25px;backdrop-filter: blur(15px);box-shadow:0 12px 25px rgba(0,0,0,0.5);text-align:center;position:relative;overflow:hidden;}
+.notice-card img {width:120px;margin-bottom:20px;filter: drop-shadow(0 4px 15px rgba(0,0,0,0.5));}
+.notice-card h2 {margin-bottom:15px;font-size:24px;opacity:0;transform: translateY(20px);animation:fadeInUp 0.6s ease forwards;animation-delay:0.1s;}
+.notice-card p {text-align:right;margin:8px 0;line-height:1.5;font-size:16px;opacity:0;transform: translateY(20px);animation:fadeInUp 0.6s ease forwards;}
+.notice-buttons {display:flex;justify-content: space-between;margin-top:20px;opacity:0;transform: translateY(20px);animation:fadeInUp 0.6s ease forwards;animation-delay:1.5s;}
+.notice-buttons button {width:48%;padding:12px;font-size:16px;font-weight:bold;border:none;border-radius:15px;cursor:pointer;transition: all 0.3s ease;}
+.notice-buttons .reject {background:#fff;color:#000;}
+.notice-buttons .accept {background:#18c4b8;color:#003;}
+.notice-buttons .reject:hover {background:#e0e0e0;}
+.notice-buttons .accept:hover {background:#12b0a0;}
+@keyframes fadeInUp {0% {opacity:0; transform: translateY(20px);} 100% {opacity:1; transform: translateY(0);}}
+</style>
+</head>
+<body>
+<div class="notice-card">
+  <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPGNpcmNsZSByPSI0NSIgeD0iNTAiIHk9IjUwIiBmaWxsPSIjM2RkMmMyIiAvPgogIDx0ZXh0IHg9IjUwIiB5PSI1NCIgZm9udC1zaXplPSIyMCIgZmlsbD0iIzAwMyIgZm9udC13ZWlnaHQ9IjcwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZG9taW5hbnQtYmFzZWxpbmU9ImNlbnRyYWwiPk1PTTwvdGV4dD4KPC9zdmc+" alt="MOMO Logo">
+  <h2>مرحبًا بالجميع!</h2>
+  <p>قبل أن نبدأ، تم تصميم هذه المنصة لمساعدتكم على تطوير أنفسكم وكسب المال. هناك تحذيرات قبل أن نبدأ. إذا وافقتم على هذه الشروط، فسنستمر معًا.</p>
+  <p>1- الوصول إلى المنصة مسؤوليتكم؛ نحن لا نتحمل أي مسؤولية.</p>
+  <p>2- المنصة عبارة عن ترتيب لتقاسم الأموال بين المستخدمين.</p>
+  <p>3- الأشخاص الذين يأتون في البداية يفوزون بضربة حظ بينكم وبين المستقبل.</p>
+  <p>4- تم إنشاء المنصة في 11/12/2025.</p>
+  <p>5- أموالكم مسؤوليتكم. إنها ضربة حظ، وستتلقون مكافأة أسبوعية من فريقكم.</p>
+
+  <div class="notice-buttons">
+    <button class="reject" onclick="rejectNotice()">رفض الشروط</button>
+    <button class="accept" onclick="acceptNotice()">أوافق على الشروط</button>
+  </div>
+</div>
+
+<script>
+function rejectNotice(){
+  alert("تم رفض الشروط. سيتم إعادة توجيهك إلى صفحة تسجيل الدخول.");
+  window.location.href = "index.html";
+}
+
+function acceptNotice(){
+  alert("شكرًا لموافقتك. جاري الانتقال للصفحة التالية...");
+  setTimeout(()=>{ window.location.href = "home.html"; },1500);
+}
+
+window.onload = ()=>{
+  const ps = document.querySelectorAll('.notice-card p, .notice-card h2');
+  ps.forEach((el,i)=>{ el.style.animationDelay = `${0.1 + i*0.2}s`; });
+};
+</script>
+</body>
+</html>
