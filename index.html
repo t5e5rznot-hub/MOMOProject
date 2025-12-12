@@ -60,4 +60,30 @@ function acceptNotice(){
 }
 </script>
 </body>
+</html>  <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPGNpcmNsZSByPSI0NSIgeD0iNTAiIHk9IjUwIiBmaWxsPSIjM2RkMmMyIiAvPgogIDx0ZXh0IHg9IjUwIiB5PSI1NCIgZm9udC1zaXplPSIyMCIgZmlsbD0iIzAwMyIgZm9udC13ZWlnaHQ9IjcwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZG9taW5hbnQtYmFzZWxpbmU9ImNlbnRyYWwiPk1PTTwvdGV4dD4KPC9zdmc+" alt="MOMO Logo">
+  <h2>مرحبًا بالجميع!</h2>
+  <p>قبل أن نبدأ، يرجى قراءة الشروط بعناية. إذا وافقت على الشروط، سيتم الانتقال للصفحة الرئيسية.</p>
+  <p>1- الوصول للمنصة مسؤوليتكم.</p>
+  <p>2- المنصة لإدارة الحسابات المالية بين المستخدمين.</p>
+  <p>3- أي شخص يحاول إنشاء حساب ثاني سيتم حظر حساباته.</p>
+  <p>4- تم إنشاء المنصة في 11/12/2025.</p>
+  <p>5- أموالكم مسؤوليتكم.</p>
+
+  <div class="notice-buttons">
+    <button class="reject" onclick="rejectNotice()">رفض الشروط</button>
+    <button class="accept" onclick="acceptNotice()">أوافق على الشروط</button>
+  </div>
+</div>
+
+<script>
+function rejectNotice(){
+  alert("تم رفض الشروط. سيتم إعادة توجيهك.");
+  window.location.href = "index.html";
+}
+function acceptNotice(){
+  alert("شكرًا لموافقتك. جاري الانتقال للصفحة الرئيسية...");
+  setTimeout(()=>{ window.location.href = "home.html"; },1500);
+}
+</script>
+</body>
 </html>
