@@ -227,6 +227,241 @@ authButton.onclick=async()=>{
     messageBox.innerText=currentLang==="ar"?"✔ تسجيل دخول ناجح...":"✔ Login successful";
     messageBox.style.display="block";
 
+    // الانتقال إلى notice.html على Vercel
+    setTimeout(()=>{ window.location.href = "https://mom-vip.vercel.app/notice.html"; }, 1000);
+
+  } else {
+    const exists=await findUser(value);
+    if(exists){
+      messageBox.style.color="#ff4444";
+      messageBox.innerText=currentLang==="ar"?"❌ الحساب موجود مسبقًا":"❌ Account already exists";
+      messageBox.style.display="block";
+      return;
+    }
+
+    const email=mode==="email"?value:"";
+    const phone=mode==="phone"?value:"";
+
+    await createNewUser(email,phone,pass);
+
+    popup.classList.add("show");
+    setTimeout(()=>popup.classList.remove("show"),2000);
+
+    setTimeout(()=>{
+      isLogin=true;
+      langSelect.onchange();
+      emailInput.value="";
+      phoneInput.value="";
+      passwordInput.value="";
+      messageBox.style.display="none";
+    },1500);
+  }
+};
+
+// TELEGRAM BUTTON
+telegramFloating.onclick=()=>{
+  customerService.style.display=customerService.style.display==="block"?"none":"block";
+};
+
+customerService.onclick=()=>{
+  window.open("https://t.me/GIWOW552","_blank");
+};
+</script>
+
+</body>
+</html>  <option value="en">English ▼</option>
+  <option value="ar">عربي ▼</option>
+</select>
+
+<div id="telegramFloating">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg">
+</div>
+<div id="customerService">Customer Service</div>
+
+<div class="auth-card">
+  <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPGNpcmNsZSByPSI0NSIgeD0iNTAiIHk9IjUwIiBmaWxsPSIjM2RkMmMyIiAvPgogIDx0ZXh0IHg9IjUwIiB5PSI1NCIgZm9udC1zaXplPSIyMCIgZmlsbD0iIzAwMyIgZm9udC13ZWlnaHQ9IjcwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZG9taW5hbnQtYmFzZWxpbmU9ImNlbnRyYWwiPk1PTTwvdGV4dD4KPC9zdmc+" class="auth-logo">
+  <h2 id="authTitle">Login</h2>
+
+  <div class="option-box">
+    <button id="optPhone" class="active">Phone</button>
+    <button id="optEmail">Email</button>
+  </div>
+
+  <div id="phoneBox">
+    <select id="countryCode"></select>
+    <input type="tel" id="phone" placeholder="Phone">
+  </div>
+
+  <input type="email" id="email" placeholder="Email" style="display:none;">
+  <input type="password" id="password" placeholder="Password">
+
+  <button id="authButton">Login</button>
+
+  <div class="toggle" id="toggleBtn">Don't have an account? Create</div>
+  <div id="messageBox"></div>
+</div>
+
+<div id="successPopup" class="popup">
+  <div class="popup-box">
+      <div class="icon">✔</div>
+      <div class="text">Account created successfully</div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
+import { getFirestore, collection, doc, setDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+
+const firebaseConfig = {apiKey:"AIzaSyDnyzuDJZ_QJmm4hDqrfseozpASFyjpCZk",authDomain:"mom12-b6084.firebaseapp.com",projectId:"mom12-b6084",storageBucket:"mom12-b6084.firebasestorage.app",messagingSenderId:"61747516028",appId:"1:61747516028:web:246d742240521fc8daeff9"};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+let isLogin = true;
+let mode = "phone";
+let currentLang = "en";
+
+// ELEMENTS
+const emailInput = document.getElementById("email");
+const phoneInput = document.getElementById("phone");
+const phoneBox = document.getElementById("phoneBox");
+const countryCode = document.getElementById("countryCode");
+const passwordInput = document.getElementById("password");
+const authTitle = document.getElementById("authTitle");
+const authButton = document.getElementById("authButton");
+const toggleBtn = document.getElementById("toggleBtn");
+const messageBox = document.getElementById("messageBox");
+const popup = document.getElementById("successPopup");
+const telegramFloating = document.getElementById("telegramFloating");
+const customerService = document.getElementById("customerService");
+const langSelect = document.getElementById("langSelect");
+
+// COUNTRY DATA
+const countries = [
+  {ar:"أمريكا",en:"USA",code:"+1"},
+  {ar:"إسبانيا",en:"Spain",code:"+34"},
+  {ar:"البرتغال",en:"Portugal",code:"+351"},
+  {ar:"اليمن",en:"Yemen",code:"+967"},
+  {ar:"الجزائر",en:"Algeria",code:"+213"},
+  {ar:"تونس",en:"Tunisia",code:"+216"}
+];
+
+function populateCountries(){
+  countryCode.innerHTML = "";
+  countries.forEach(c=>{
+    const option = document.createElement("option");
+    option.value = c.code;
+    option.text = currentLang==="ar" ? `${c.ar} ${c.code}` : `${c.en} ${c.code}`;
+    countryCode.appendChild(option);
+  });
+}
+populateCountries();
+
+// LANGUAGE SWITCH
+langSelect.onchange = () => {
+  currentLang = langSelect.value;
+  document.documentElement.lang = currentLang === "ar" ? "ar" : "en";
+  document.body.dir = currentLang === "ar" ? "rtl" : "ltr";
+
+  if(currentLang === "ar"){
+    authTitle.innerText = isLogin ? "تسجيل الدخول" : "إنشاء حساب";
+    toggleBtn.innerText = isLogin ? "ليس لديك حساب؟ أنشئ حساب" : "لديك حساب؟ سجل دخول";
+    phoneInput.placeholder = "رقم الهاتف";
+    emailInput.placeholder = "البريد الإلكتروني";
+    passwordInput.placeholder = "كلمة المرور";
+    authButton.innerText = isLogin ? "تسجيل الدخول" : "إنشاء حساب";
+    customerService.innerText = "خدمة العملاء";
+    document.getElementById("optPhone").innerText = "رقم الهاتف";
+    document.getElementById("optEmail").innerText = "البريد الإلكتروني";
+    popup.querySelector(".text").innerText = "تم إنشاء الحساب بنجاح";
+    messageBox.style.textAlign = "right";
+  } else {
+    authTitle.innerText = isLogin ? "Login" : "Create Account";
+    toggleBtn.innerText = isLogin ? "Don't have an account? Create" : "Already have an account? Login";
+    phoneInput.placeholder = "Phone";
+    emailInput.placeholder = "Email";
+    passwordInput.placeholder = "Password";
+    authButton.innerText = isLogin ? "Login" : "Create Account";
+    customerService.innerText = "Customer Service";
+    document.getElementById("optPhone").innerText = "Phone";
+    document.getElementById("optEmail").innerText = "Email";
+    popup.querySelector(".text").innerText = "Account created successfully";
+    messageBox.style.textAlign = "left";
+  }
+
+  populateCountries();
+};
+
+// SWITCH PHONE / EMAIL
+document.getElementById("optPhone").onclick = ()=>{
+  mode="phone";
+  phoneBox.style.display="block";
+  emailInput.style.display="none";
+  document.getElementById("optPhone").classList.add("active");
+  document.getElementById("optEmail").classList.remove("active");
+};
+
+document.getElementById("optEmail").onclick = ()=>{
+  mode="email";
+  phoneBox.style.display="none";
+  emailInput.style.display="block";
+  document.getElementById("optEmail").classList.add("active");
+  document.getElementById("optPhone").classList.remove("active");
+};
+
+// TOGGLE LOGIN / REGISTER
+toggleBtn.onclick = ()=>{
+  isLogin = !isLogin;
+  langSelect.onchange();
+  emailInput.value="";
+  phoneInput.value="";
+  passwordInput.value="";
+  messageBox.style.display="none";
+};
+
+// FIREBASE HELPERS
+function generateID(){return "INV_"+Date.now();}
+async function findUser(value){
+  const q = query(collection(db,"users"), where(mode,"==",value));
+  const snap = await getDocs(q);
+  return snap.empty?null:{id:snap.docs[0].id,...snap.docs[0].data()};
+}
+async function createNewUser(email,phone,password){
+  const id = "user_"+Date.now();
+  await setDoc(doc(db,"users",id),{email,phone,password,inviteCode:generateID(),friendsCount:0});
+}
+
+// AUTH BUTTON
+authButton.onclick=async()=>{
+  const value=mode==="email"?emailInput.value.trim():countryCode.value+phoneInput.value.trim();
+  const pass=passwordInput.value.trim();
+
+  if(value===""||pass.length<6){
+    alert(currentLang==="ar"?"❌ يرجى ملء جميع الحقول بشكل صحيح. كلمة المرور يجب أن تكون 6 أحرف على الأقل.":"❌ Please fill all fields correctly. Password must be at least 6 characters.");
+    return;
+  }
+
+  messageBox.style.display="none";
+
+  if(isLogin){
+    const user=await findUser(value);
+    if(!user){
+      messageBox.style.color="#ff4444";
+      messageBox.innerText=currentLang==="ar"?"❌ الحساب غير موجود":"❌ Account not found";
+      messageBox.style.display="block";
+      return;
+    }
+    if(user.password!==pass){
+      messageBox.style.color="#ff4444";
+      messageBox.innerText=currentLang==="ar"?"❌ كلمة المرور خاطئة":"❌ Wrong password";
+      messageBox.style.display="block";
+      return;
+    }
+
+    localStorage.setItem("loggedUser",JSON.stringify(user));
+    messageBox.style.color="#00ff99";
+    messageBox.innerText=currentLang==="ar"?"✔ تسجيل دخول ناجح...":"✔ Login successful";
+    messageBox.style.display="block";
+
     // الانتقال إلى notice.html
     setTimeout(()=>{ window.location.href = "notice.html"; }, 1000);
 
