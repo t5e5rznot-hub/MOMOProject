@@ -6,29 +6,8 @@
 <title>MOMO Auth</title>
 <style>
 *{box-sizing:border-box;}
-body{
-  margin:0;
-  padding:0;
-  font-family:'Segoe UI',sans-serif;
-  background:linear-gradient(135deg,#0f4c4c,#081818);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  min-height:100vh; /* بدل height */
-  color:#fff;
-}
-.auth-card{
-  width:90%;
-  max-width:400px;
-  background:rgba(255,255,255,0.05);
-  padding:30px;
-  border-radius:25px;
-  backdrop-filter:blur(15px);
-  text-align:center;
-  position:relative;
-  box-shadow:0 12px 25px rgba(0,0,0,0.5);
-  margin:auto; /* يضمن تمركز الكرت */
-}
+body{margin:0;padding:0;font-family:'Segoe UI',sans-serif;background:linear-gradient(135deg,#0f4c4c,#081818);display:flex;justify-content:center;align-items:center;height:100vh;color:#fff;overflow:hidden;}
+.auth-card{width:90%;max-width:400px;background:rgba(255,255,255,0.05);padding:30px;border-radius:25px;backdrop-filter:blur(15px);text-align:center;position:relative;box-shadow:0 12px 25px rgba(0,0,0,0.5);}
 .auth-logo{width:120px;margin-bottom:15px;}
 h2{margin-bottom:20px;}
 input, select{width:100%;padding:14px;border-radius:15px;background:rgba(255,255,255,0.15);border:none;color:white;margin-bottom:15px;font-size:16px;}
@@ -40,6 +19,7 @@ button{width:100%;padding:15px;background:#18c4b8;border:none;border-radius:25px
 .option-box button{width:48%;padding:10px;background:#1a7070;border:none;border-radius:15px;color:#fff;cursor:pointer;}
 .option-box .active{background:#18c4b8;color:#003;}
 #langSelect{position:fixed;top:20px;left:20px;width:100px;height:30px;background:#18c4b8;color:#003;border:none;border-radius:15px;padding:0 8px;font-weight:bold;cursor:pointer;z-index:1000;}
+#countrySearch{position:fixed;top:60px;left:20px;width:130px;height:30px;border-radius:8px;padding:0 8px;z-index:1000;}
 #telegramFloating{position:fixed;bottom:20px;right:20px;width:70px;height:70px;border-radius:50%;background:#0088cc;display:flex;justify-content:center;align-items:center;cursor:pointer;box-shadow:0 5px 15px rgba(0,0,0,0.4);z-index:1000;user-select:none;animation:flash 2s infinite;transition:transform 0.3s ease;}
 #telegramFloating img{width:50px;height:50px;border-radius:50%;}
 @keyframes flash{0%,100%{box-shadow:0 0 20px rgba(255,255,255,0.6);}50%{box-shadow:0 0 40px rgba(255,255,255,1);}}
@@ -58,6 +38,7 @@ button{width:100%;padding:15px;background:#18c4b8;border:none;border-radius:25px
   <option value="en">English ▼</option>
   <option value="ar">عربي ▼</option>
 </select>
+<input type="text" id="countrySearch" placeholder="Search country...">
 
 <div id="telegramFloating">
   <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg">
@@ -120,27 +101,44 @@ const popup = document.getElementById("successPopup");
 const telegramFloating = document.getElementById("telegramFloating");
 const customerService = document.getElementById("customerService");
 const langSelect = document.getElementById("langSelect");
+const countrySearch = document.getElementById("countrySearch");
 
-// COUNTRY DATA
-const countries = [
-  {ar:"أمريكا",en:"USA",code:"+1"},
-  {ar:"إسبانيا",en:"Spain",code:"+34"},
-  {ar:"البرتغال",en:"Portugal",code:"+351"},
-  {ar:"اليمن",en:"Yemen",code:"+967"},
-  {ar:"الجزائر",en:"Algeria",code:"+213"},
-  {ar:"تونس",en:"Tunisia",code:"+216"}
+// FULL COUNTRY LIST
+const allCountries = [
+  {name:{en:"United States",ar:"أمريكا"},code:"+1"},
+  {name:{en:"Spain",ar:"إسبانيا"},code:"+34"},
+  {name:{en:"Portugal",ar:"البرتغال"},code:"+351"},
+  {name:{en:"Yemen",ar:"اليمن"},code:"+967"},
+  {name:{en:"Algeria",ar:"الجزائر"},code:"+213"},
+  {name:{en:"Tunisia",ar:"تونس"},code:"+216"},
+  {name:{en:"France",ar:"فرنسا"},code:"+33"},
+  {name:{en:"Germany",ar:"ألمانيا"},code:"+49"},
+  {name:{en:"Italy",ar:"إيطاليا"},code:"+39"},
+  {name:{en:"Canada",ar:"كندا"},code:"+1"},
+  {name:{en:"China",ar:"الصين"},code:"+86"},
+  {name:{en:"Japan",ar:"اليابان"},code:"+81"},
+  {name:{en:"Russia",ar:"روسيا"},code:"+7"},
+  {name:{en:"Brazil",ar:"البرازيل"},code:"+55"},
+  {name:{en:"India",ar:"الهند"},code:"+91"},
+  // أضف باقي الدول هنا حسب الحاجة...
 ];
 
-function populateCountries(){
-  countryCode.innerHTML = "";
-  countries.forEach(c=>{
-    const option = document.createElement("option");
-    option.value = c.code;
-    option.text = currentLang==="ar" ? `${c.ar} ${c.code}` : `${c.en} ${c.code}`;
-    countryCode.appendChild(option);
+function populateCountriesFilter(filter=""){
+  countryCode.innerHTML="";
+  allCountries.forEach(c=>{
+    const countryName = c.name[currentLang] || c.name.en;
+    if(countryName.toLowerCase().includes(filter.toLowerCase())){
+      const option = document.createElement("option");
+      option.value = c.code;
+      option.text = `${countryName} ${c.code}`;
+      countryCode.appendChild(option);
+    }
   });
 }
-populateCountries();
+populateCountriesFilter();
+
+// SEARCH FIELD
+countrySearch.addEventListener("input", ()=>populateCountriesFilter(countrySearch.value));
 
 // LANGUAGE SWITCH
 langSelect.onchange = () => {
@@ -173,23 +171,17 @@ langSelect.onchange = () => {
     popup.querySelector(".text").innerText = "Account created successfully";
     messageBox.style.textAlign = "left";
   }
-
-  populateCountries();
+  populateCountriesFilter(countrySearch.value);
 };
 
 // SWITCH PHONE / EMAIL
 document.getElementById("optPhone").onclick = ()=>{
-  mode="phone";
-  phoneBox.style.display="block";
-  emailInput.style.display="none";
+  mode="phone"; phoneBox.style.display="block"; emailInput.style.display="none";
   document.getElementById("optPhone").classList.add("active");
   document.getElementById("optEmail").classList.remove("active");
 };
-
 document.getElementById("optEmail").onclick = ()=>{
-  mode="email";
-  phoneBox.style.display="none";
-  emailInput.style.display="block";
+  mode="email"; phoneBox.style.display="none"; emailInput.style.display="block";
   document.getElementById("optEmail").classList.add("active");
   document.getElementById("optPhone").classList.remove("active");
 };
@@ -198,9 +190,7 @@ document.getElementById("optEmail").onclick = ()=>{
 toggleBtn.onclick = ()=>{
   isLogin = !isLogin;
   langSelect.onchange();
-  emailInput.value="";
-  phoneInput.value="";
-  passwordInput.value="";
+  emailInput.value=""; phoneInput.value=""; passwordInput.value="";
   messageBox.style.display="none";
 };
 
@@ -230,63 +220,27 @@ authButton.onclick=async()=>{
 
   if(isLogin){
     const user=await findUser(value);
-    if(!user){
-      messageBox.style.color="#ff4444";
-      messageBox.innerText=currentLang==="ar"?"❌ الحساب غير موجود":"❌ Account not found";
-      messageBox.style.display="block";
-      return;
-    }
-    if(user.password!==pass){
-      messageBox.style.color="#ff4444";
-      messageBox.innerText=currentLang==="ar"?"❌ كلمة المرور خاطئة":"❌ Wrong password";
-      messageBox.style.display="block";
-      return;
-    }
-
+    if(!user){ messageBox.style.color="#ff4444"; messageBox.innerText=currentLang==="ar"?"❌ الحساب غير موجود":"❌ Account not found"; messageBox.style.display="block"; return;}
+    if(user.password!==pass){ messageBox.style.color="#ff4444"; messageBox.innerText=currentLang==="ar"?"❌ كلمة المرور خاطئة":"❌ Wrong password"; messageBox.style.display="block"; return;}
     localStorage.setItem("loggedUser",JSON.stringify(user));
-    messageBox.style.color="#00ff99";
-    messageBox.innerText=currentLang==="ar"?"✔ تسجيل دخول ناجح...":"✔ Login successful";
-    messageBox.style.display="block";
-
+    messageBox.style.color="#00ff99"; messageBox.innerText=currentLang==="ar"?"✔ تسجيل دخول ناجح...":"✔ Login successful"; messageBox.style.display="block";
     setTimeout(()=>{ window.location.href = "https://mom-vip.vercel.app/notice.html"; }, 1000);
-
   } else {
     const exists=await findUser(value);
-    if(exists){
-      messageBox.style.color="#ff4444";
-      messageBox.innerText=currentLang==="ar"?"❌ الحساب موجود مسبقًا":"❌ Account already exists";
-      messageBox.style.display="block";
-      return;
-    }
-
+    if(exists){ messageBox.style.color="#ff4444"; messageBox.innerText=currentLang==="ar"?"❌ الحساب موجود مسبقًا":"❌ Account already exists"; messageBox.style.display="block"; return;}
     const email=mode==="email"?value:"";
     const phone=mode==="phone"?value:"";
-
     await createNewUser(email,phone,pass);
-
     popup.classList.add("show");
     setTimeout(()=>popup.classList.remove("show"),2000);
-
-    setTimeout(()=>{
-      isLogin=true;
-      langSelect.onchange();
-      emailInput.value="";
-      phoneInput.value="";
-      passwordInput.value="";
-      messageBox.style.display="none";
-    },1500);
+    setTimeout(()=>{ isLogin=true; langSelect.onchange(); emailInput.value=""; phoneInput.value=""; passwordInput.value=""; messageBox.style.display="none"; },1500);
   }
 };
 
 // TELEGRAM BUTTON
-telegramFloating.onclick=()=>{
-  customerService.style.display=customerService.style.display==="block"?"none":"block";
-};
-
-customerService.onclick=()=>{
-  window.open("https://t.me/GIWOW552","_blank");
-};
+telegramFloating.onclick=()=>{ customerService.style.display=customerService.style.display==="block"?"none":"block"; };
+customerService.onclick=()=>{ window.open("https://t.me/GIWOW552","_blank"); };
 </script>
 
 </body>
-</html>
+  </html>
