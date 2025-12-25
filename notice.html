@@ -1,183 +1,151 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>تنبيه قبل الدخول</title>
+
 <style>
-*{box-sizing:border-box;}
-body {margin:0;padding:0;font-family:'Segoe UI',sans-serif;
-background: linear-gradient(135deg, #0f4c4c, #081818);
-display:flex;justify-content:center;align-items:center;height:100vh;color:#fff;}
-
-.notice-card {
+*{box-sizing:border-box}
+body{
+  margin:0;padding:0;font-family:'Segoe UI',sans-serif;
+  background:linear-gradient(135deg,#0f4c4c,#081818);
+  display:flex;justify-content:center;align-items:center;
+  height:100vh;color:#fff
+}
+.notice-card{
   width:90%;max-width:500px;
-  background: rgba(255,255,255,0.05);
+  background:rgba(255,255,255,.05);
   padding:30px;border-radius:25px;
-  backdrop-filter: blur(15px);
-  box-shadow:0 12px 25px rgba(0,0,0,0.5);
-  text-align:center;position:relative;overflow:hidden;
+  backdrop-filter:blur(15px);
+  box-shadow:0 12px 25px rgba(0,0,0,.5);
+  text-align:center
 }
-.notice-card img {
-  width:120px;margin-bottom:20px;
-  filter: drop-shadow(0 4px 15px rgba(0,0,0,0.5));
+.notice-card img{width:120px;margin-bottom:20px}
+.notice-card h2{margin-bottom:15px;font-size:24px}
+.notice-card p{text-align:right;margin:8px 0;line-height:1.6}
+
+.notice-buttons{display:flex;justify-content:space-between;margin-top:20px}
+.notice-buttons button{
+  width:48%;padding:12px;font-size:16px;
+  border:none;border-radius:15px;cursor:pointer
 }
-.notice-card h2 {margin-bottom:15px;font-size:24px;opacity:0;transform: translateY(20px);
-animation:fadeInUp 0.6s ease forwards;animation-delay:0.1s;}
-.notice-card p {text-align:right;margin:8px 0;line-height:1.5;font-size:16px;opacity:0;transform: translateY(20px);
-animation:fadeInUp 0.6s ease forwards;}
-.notice-buttons {display:flex;justify-content: space-between;margin-top:20px;opacity:0;transform: translateY(20px);
-animation:fadeInUp 0.6s ease forwards;animation-delay:1.5s;}
-.notice-buttons button {width:48%;padding:12px;font-size:16px;font-weight:bold;border:none;border-radius:15px;cursor:pointer;transition: all 0.3s ease;}
-.notice-buttons .reject {background:#fff;color:#000;}
-.notice-buttons .accept {background:#18c4b8;color:#003;}
-.notice-buttons .reject:hover {background:#e0e0e0;}
-.notice-buttons .accept:hover {background:#12b0a0;}
+.reject{background:#fff;color:#000}
+.accept{background:#18c4b8;color:#003}
 
-/* Delete account button */
-#deleteAccountBtn {margin-top:20px;background:#ff4444;color:#fff;width:100%;padding:12px;border:none;border-radius:15px;font-weight:bold;cursor:pointer;}
+#deleteAccountBtn{
+  margin-top:20px;background:#ff4444;
+  color:#fff;width:100%;padding:12px;
+  border:none;border-radius:15px;font-weight:bold;display:none
+}
 
-/* Telegram floating button */
 #telegramFloating{
-  position:fixed;bottom:20px;right:20px;width:70px;height:70px;border-radius:50%;
-  background:#0088cc;display:flex;justify-content:center;align-items:center;
-  cursor:pointer;box-shadow:0 5px 15px rgba(0,0,0,0.4);z-index:1000;user-select:none;
-  animation:flash 2s infinite;transition:transform 0.3s ease;
+  position:fixed;bottom:20px;right:20px;
+  width:70px;height:70px;border-radius:50%;
+  background:#0088cc;display:flex;
+  justify-content:center;align-items:center;
+  cursor:pointer;box-shadow:0 5px 15px rgba(0,0,0,.4)
 }
-#telegramFloating img{width:50px;height:50px;border-radius:50%;}
-#telegramFloating:hover{transform:rotate(15deg) scale(1.1);}
-@keyframes flash{0%,100%{box-shadow:0 0 20px rgba(255,255,255,0.6);}50%{box-shadow:0 0 40px rgba(255,255,255,1);}}
+#telegramFloating img{width:45px}
 
-/* Customer Service button */
 #customerService{
-  position:fixed;bottom:100px;right:20px;background:#18c4b8;
-  padding:12px 18px;border-radius:20px;color:#003;font-weight:bold;
-  cursor:pointer;display:none;box-shadow:0 5px 15px rgba(0,0,0,0.3);z-index:1000;
+  position:fixed;bottom:100px;right:20px;
+  background:#18c4b8;padding:10px 18px;
+  border-radius:20px;color:#003;
+  font-weight:bold;display:none;cursor:pointer
 }
 
-/* Language floating button */
 #langSelect{
-  position:fixed;top:20px;left:20px;width:100px;height:30px;
-  background:#18c4b8;color:#003;border:none;border-radius:15px;
-  padding:0 8px;font-weight:bold;cursor:pointer;z-index:1000;
+  position:fixed;top:20px;left:20px;
+  padding:5px 10px;border-radius:15px;
+  border:none;font-weight:bold
 }
-@keyframes fadeInUp {0% {opacity:0; transform: translateY(20px);} 100% {opacity:1; transform: translateY(0);}}
 </style>
 </head>
+
 <body>
 
 <select id="langSelect">
-  <option value="ar">عربي ▼</option>
-  <option value="en">English ▼</option>
+  <option value="ar">عربي</option>
+  <option value="en">English</option>
 </select>
 
-<div class="notice-card" id="noticeCard">
-  <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPGNpcmNsZSByPSI0NSIgeD0iNTAiIHk9IjUwIiBmaWxsPSIjM2RkMmMyIiAvPgogIDx0ZXh0IHg9IjUwIiB5PSI1NCIgZm9udC1zaXplPSIyMCIgZmlsbD0iIzAwMyIgZm9udC13ZWlnaHQ9IjcwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZG9taW5hbnQtYmFzZWxpbmU9ImNlbnRyYWwiPk1PTTwvdGV4dD4KPC9zdmc+" alt="MOMO Logo">
-  <h2 id="noticeTitle">مرحبًا بالجميع!</h2>
-  <p id="noticeText1">قبل أن نبدأ، تم تصميم هذه المنصة لمساعدتكم على تطوير أنفسكم وكسب المال. هناك تحذيرات قبل أن نبدأ. إذا وافقتم على هذه الشروط، فسنستمر معًا.</p>
-  <p id="noticeText2">1- الوصول إلى المنصة مسؤوليتكم؛ نحن لا نتحمل أي مسؤولية.</p>
-  <p id="noticeText3">2- المنصة عبارة عن ترتيب لتقاسم الأموال بين المستخدمين الذين يخسرون في النهاية.</p>
-  <p id="noticeText4">3- الأشخاص الذين يأتون في البداية يفوزون بضربة حظ بينكم وبين المستقبل.</p>
-  <p id="noticeText5">4- تم إنشاء المنصة في 21/11/2025.</p>
-  <p id="noticeText6">5- أموالكم مسؤوليتكم. إنها ضربة حظ، وستتلقون مكافأة أسبوعية من فريقكم.</p>
+<div class="notice-card">
+  <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCI+PHRleHQgeD0iNTAiIHk9IjU1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjMwIiBmaWxsPSIjM2RkMmMyIj5NT01PPC90ZXh0Pjwvc3ZnPg==">
+  <h2 id="title"></h2>
+  <p id="t1"></p>
+  <p id="t2"></p>
+  <p id="t3"></p>
+  <p id="t4"></p>
+  <p id="t5"></p>
 
   <div class="notice-buttons">
-    <button class="reject" onclick="rejectNotice()" id="rejectBtn">رفض الشروط</button>
-    <button class="accept" onclick="acceptNotice()" id="acceptBtn">أوافق على الشروط</button>
+    <button class="reject" onclick="reject()">رفض</button>
+    <button class="accept" onclick="accept()">موافق</button>
   </div>
 
-  <button id="deleteAccountBtn">حذف / تعطيل الحساب</button>
+  <button id="deleteAccountBtn" onclick="deleteAccount()">حذف / تعطيل الحساب</button>
 </div>
 
 <div id="telegramFloating">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="Telegram">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg">
 </div>
-
-<div id="customerService" onclick="openTelegram()">خدمة العملاء</div>
+<div id="customerService" onclick="openTG()">خدمة العملاء</div>
 
 <script>
-const langSelect = document.getElementById("langSelect");
-const noticeTitle = document.getElementById("noticeTitle");
-const noticeText1 = document.getElementById("noticeText1");
-const noticeText2 = document.getElementById("noticeText2");
-const noticeText3 = document.getElementById("noticeText3");
-const noticeText4 = document.getElementById("noticeText4");
-const noticeText5 = document.getElementById("noticeText5");
-const noticeText6 = document.getElementById("noticeText6");
-const rejectBtn = document.getElementById("rejectBtn");
-const acceptBtn = document.getElementById("acceptBtn");
-const telegramFloating = document.getElementById("telegramFloating");
-const customerService = document.getElementById("customerService");
-const deleteAccountBtn = document.getElementById("deleteAccountBtn");
-
-function setLanguage(lang){
-  localStorage.setItem("userLang", lang);
-  if(lang === "ar"){
-    document.documentElement.lang = "ar"; document.body.dir = "rtl";
-    noticeTitle.innerText = "مرحبًا بالجميع!";
-    noticeText1.innerText = "قبل أن نبدأ، تم تصميم هذه المنصة لمساعدتكم على تطوير أنفسكم وكسب المال. هناك تحذيرات قبل أن نبدأ. إذا وافقتم على هذه الشروط، فسنستمر معًا.";
-    noticeText2.innerText = "1- الوصول إلى المنصة مسؤوليتكم؛ نحن لا نتحمل أي مسؤولية.";
-    noticeText3.innerText = "2- المنصة عبارة عن ترتيب لتقاسم الأموال بين المستخدمين الذين يخسرون في النهاية.";
-    noticeText4.innerText = "3- الأشخاص الذين يأتون في البداية يفوزون بضربة حظ بينكم وبين المستقبل.";
-    noticeText5.innerText = "4- تم إنشاء المنصة في 11/12/2025.";
-    noticeText6.innerText = "5- أموالكم مسؤوليتكم. إنها ضربة حظ، وستتلقون مكافأة أسبوعية من فريقكم.";
-    rejectBtn.innerText = "رفض الشروط";
-    acceptBtn.innerText = "أوافق على الشروط";
-    customerService.innerText = "خدمة العملاء";
-    deleteAccountBtn.innerText = "حذف / تعطيل الحساب";
-  } else {
-    document.documentElement.lang = "en"; document.body.dir = "ltr";
-    noticeTitle.innerText = "Welcome Everyone!";
-    noticeText1.innerText = "Before we start, this platform is designed to help you improve yourself and earn money. There are warnings before we begin. If you agree to these terms, we will continue together.";
-    noticeText2.innerText = "1- Access to the platform is your responsibility; we assume no liability.";
-    noticeText3.innerText = "2- The platform is a setup for sharing money among users who ultimately lose.";
-    noticeText4.innerText = "3- Early participants win a luck strike between you and the future.";
-    noticeText5.innerText = "4- Platform was created on 11/12/2025.";
-    noticeText6.innerText = "5- Your funds are your responsibility. It's a luck game, and you will receive a weekly reward from your team.";
-    rejectBtn.innerText = "Reject Terms";
-    acceptBtn.innerText = "I Agree";
-    customerService.innerText = "Customer Service";
-    deleteAccountBtn.innerText = "Delete/Disable Account";
-  }
+const TEXT={
+ar:{
+title:"مرحبًا بالجميع!",
+t1:"قبل البدء، هذه المنصة تجريبية والتعليم فقط.",
+t2:"1- استخدام المنصة على مسؤوليتك الشخصية.",
+t3:"2- لا توجد أي ضمانات ربح.",
+t4:"3- النتائج تختلف من شخص لآخر.",
+t5:"4- تاريخ الإنشاء: 11/12/2025",
+reject:"تم الرفض",
+accept:"تمت الموافقة"
+},
+en:{
+title:"Welcome!",
+t1:"This platform is for testing and educational purposes only.",
+t2:"1- Use at your own responsibility.",
+t3:"2- No profit guarantees.",
+t4:"3- Results may vary.",
+t5:"4- Created on: 11/12/2025",
+reject:"Rejected",
+accept:"Accepted"
+}
 }
 
-window.onload = () => {
-  const savedLang = localStorage.getItem("userLang") || "en";
-  langSelect.value = savedLang;
-  setLanguage(savedLang);
-  const ps = document.querySelectorAll('.notice-card p, .notice-card h2');
-  ps.forEach((el,i)=>{ el.style.animationDelay = `${0.1 + i*0.2}s`; });
-};
-
-langSelect.onchange = () => { setLanguage(langSelect.value); };
-
-function rejectNotice(){
-  alert(langSelect.value==="ar"?"تم رفض الشروط. سيتم إعادة توجيهك.":"Terms rejected. Redirecting.");
-  window.location.href = "index.html";
+function setLang(l){
+document.documentElement.lang=l
+document.body.dir=l==="ar"?"rtl":"ltr"
+for(let k in TEXT[l]){
+if(document.getElementById(k))
+document.getElementById(k).innerText=TEXT[l][k]
+}
 }
 
-function acceptNotice(){
-  alert(langSelect.value==="ar"?"شكرًا لموافقتك. جاري الانتقال للصفحة التالية...":"Thank you for agreeing. Redirecting...");
-  setTimeout(()=>{ window.location.href = "home.html"; },1500);
+document.getElementById("langSelect").onchange=e=>setLang(e.target.value)
+setLang("ar")
+
+function accept(){location.href="home.html"}
+function reject(){location.href="index.html"}
+
+const user=localStorage.getItem("loggedUser")
+if(user) document.getElementById("deleteAccountBtn").style.display="block"
+
+function deleteAccount(){
+localStorage.removeItem("loggedUser")
+alert("تم حذف الحساب")
+location.href="index.html"
 }
 
-// Telegram & Customer Service
-telegramFloating.onclick = () => {
-  customerService.style.display = customerService.style.display === "block" ? "none" : "block";
-};
-function openTelegram(){ window.open("https://t.me/GIWOW552", "_blank"); }
-
-// Delete/Disable account (admin only)
-deleteAccountBtn.onclick = () => {
-  const loggedUser = JSON.parse(localStorage.getItem("loggedUser")||"{}");
-  if(!loggedUser.email){ alert(langSelect.value==="ar"?"لا يوجد حساب لحذفه":"No account to delete"); return; }
-  const confirmDelete = confirm(langSelect.value==="ar"?"هل أنت متأكد أنك تريد حذف وتعطيل الحساب؟ هذا الإجراء لا يمكن التراجع عنه!":"Are you sure you want to delete/disable the account? This action cannot be undone!");
-  if(confirmDelete){
-    localStorage.removeItem("loggedUser");
-    alert(langSelect.value==="ar"?"تم حذف الحساب بنجاح.":"Account deleted successfully.");
-    window.location.href = "index.html";
-  }
-};
+telegramFloating.onclick=()=>{
+customerService.style.display=
+customerService.style.display==="block"?"none":"block"
+}
+function openTG(){window.open("https://t.me/GIWOW552","_blank")}
 </script>
+
 </body>
 </html>
